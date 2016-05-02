@@ -1,0 +1,42 @@
+<ion-side-menus enable-menu-with-back-views="false">
+  <ion-side-menu-content>
+    <ion-nav-bar class="bar-assertive">
+      <ion-nav-back-button>
+      </ion-nav-back-button>
+
+      <ion-nav-buttons side="left">
+        <button class="button button-icon button-clear ion-navicon" menu-toggle="left">
+        </button>
+      </ion-nav-buttons>
+    </ion-nav-bar>
+    <ion-nav-view name="menuContent"></ion-nav-view>
+  </ion-side-menu-content>
+
+  <ion-side-menu side="left">
+    <ion-header-bar class="bar-calm">
+      <h1 class="title">Menu</h1>
+    </ion-header-bar>
+    <ion-content>
+      <ion-list>
+        <ion-item menu-close  href="#/app/overview" >
+           <i class="icon ion-ios-pulse-strong"></i>&nbsp; Overview
+        </ion-item>
+        <ion-item menu-close href="#/app/setExpense">
+        <i class="icon ion-cash"></i>&nbsp;  Set Budget
+        </ion-item>
+         <ion-item menu-close href="#/app/history">
+        <i class="icon ion-ios-book"></i>&nbsp;  History
+        </ion-item>
+        <ion-item menu-close href="#/app/categories">
+          <i class="icon ion-android-apps"></i>&nbsp; Categories
+        </ion-item>
+        <ion-item menu-close href="#/app/statistics">
+          <i class='icon ion-ios-pie'></i>&nbsp;Statistics
+        </ion-item>
+      </ion-list>
+
+    </ion-content>
+  </ion-side-menu>
+ 
+ 
+</ion-side-menus>

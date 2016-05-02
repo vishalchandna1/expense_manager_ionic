@@ -1,0 +1,23 @@
+<ion-view view-title="Set Expense">
+  <ion-content>
+  	<div class='card'>
+  		<h4 style='text-align: center;margin-top:2%'>Set Current&nbsp;<time>({{ budget.currentDate |  amDateFormat: ' MMMM YYYY' }}</time>&nbsp;)&nbsp;Budget</h4>
+	  	 <div style='margin-left:5%;margin-right:5%' class="mui-textfield mui-textfield--float-label">
+			    <input type="number"ng-model='budget.value'>
+			    <label>Budget Value</label>
+		 </div>
+		 <button style='width:90%;margin-left:5%;margin-right:5%;margin-bottom:3%;'class="mui-btn mui-btn--raised mui-btn--small mui-btn--danger "ng-click='storeBudget()'>Set Budget</button>
+		 
+	</div>	 
+	<div class='card' ng-show='dataAvailable'>
+	<h3 style='text-align: center;margin-top:4%'><b>Budget History</b></h3>
+	
+	<h4 style='margin-left:5%;'ng-repeat="obj in budgetHistory"><hr style='margin-right:5%'><time>{{ obj.currentDate |  amDateFormat: ' MMMM YYYY' }}:&nbsp;<b>{{obj.value}}</b></time></h4>
+	</div>
+	<div class='card'ng-hide='dataAvailable'>
+	<h3 style='text-align: center;margin-top:4%'><b>Budget History</b></h3>
+    <h3 style='text-align: center;'>No Budget Data</h3>
+    <h2 style='text-align: center;'>Available!!</h2>
+    </div>
+  </ion-content>
+</ion-view>

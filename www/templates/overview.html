@@ -1,0 +1,46 @@
+<ion-view view-title="Overview">
+ <div ng-controller="overviewCtrl">
+<ion-content>
+    <div style='width:90%;margin-top:1%;margin-left:5%' class="mui-dropdown">
+              <button  style='width:100%;' class="mui-btn mui-btn--danger mui-btn--small" data-mui-toggle="dropdown">
+                <time>{{selectedMonth | amDateFormat: ' MMMM YYYY' }}</time>
+                <span class="mui-caret"></span>
+              </button>
+              <ul style='width:80%;margin-left:10%;margin-right: 10%; 'class="mui-dropdown__menu ">
+                <li ng-repeat="date in months track by $index"><a ng-click="chooseMonth({{date}})"><time>{{ date |  amDateFormat: ' MMMM YYYY' }}</time></a></li>
+              
+              </ul>
+           </div>
+  	
+  	<div>
+  	  <nvd3 options="vm.options" data="vm.data"></nvd3>
+    </div>  
+    <div ng-if="showBudgetVariables"style='margin-top:-6%'>
+      <nvd3 options="vm.budgetOptions" data="vm.budgetData"></nvd3>
+    </div>
+    <div ng-if="showBudgetVariables" style='margin-left:29%;margin-top: -10%'>
+    <h4>Budget: &nbsp;<b>{{totalBudget}}</b></h4>
+    <h4>Total Expense:&nbsp;<b>{{totalExpense}}</b></h4>
+    <h4 ng-hide="overSpent">Yet to be Spent:&nbsp;<b>{{totalBudget-totalExpense}}</b></h4>
+    <h4 ng-if="overSpent">OverSpent:&nbsp;<b>{{totalExpense-totalBudget}}</b></h4>
+    </div>  
+    <div ng-hide='showBudgetVariables'>
+    <h3 style='text-align: center;'>No Budget Data</h3>
+    <h2 style='text-align: center;'>Available!!</h2>
+    </div>
+  	
+  	
+<!--  <canvas id="bar" class="chart chart-bar"
+  chart-data="data" chart-labels="labels"chart-series="series"legend='true'> 
+</canvas> -->
+  	
+  
+  
+  </ion-content>
+  <ion-footer-bar class='pizza-footer no-line' style='margin-bottom:10% '>
+    
+    	<button style="box-shadow:0 16px 24px 0 rgba(0,0,0,0.22),0 25px 55px 0 rgba(0,0,0,0.21) !important"class="mui-btn button  mui-btn--fab mui-btn--primary pull-right" ng-click='addExpense()'>+</button>
+  		
+  	</ion-footer-bar>
+</div>
+</ion-view>

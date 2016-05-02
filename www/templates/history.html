@@ -1,0 +1,21 @@
+<ion-view view-title="History">
+  <ion-content>
+     <ion-list>
+        <div collection-repeat="item in data | filter:searchText | groupByMonthYear" divider-collection-repeat>
+           
+				 <div class="item item-button-right">
+				    <div style="margin-top:-1%"><h2>{{item.title}}</h2><h2>{{item.catText}},&nbsp;&nbsp;<time>{{ item.date.toDateString()}}</time></h2></div>
+				    <button style="margin-top:.5%" class="button button-assertive">
+				      <i class="">{{item.debitAmount}}</i>
+				     
+				    </button>
+				      
+				    
+				  </div>
+                
+                
+           
+        </div>
+    </ion-list>  
+  </ion-content>
+</ion-view>

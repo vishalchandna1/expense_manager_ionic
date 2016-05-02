@@ -1,0 +1,28 @@
+<ion-view view-title="Statistics">
+	<ion-content>
+		<ion-slide-box >	
+			<ion-slide>
+					 <div style='width:90%;margin-top:2%;margin-left:5%' class="mui-dropdown">
+						  <button  style='width:100%;' class="mui-btn mui-btn--danger" data-mui-toggle="dropdown">
+						    <time>{{selectedMonth | amDateFormat: ' MMMM YYYY' }}</time>
+						    <span class="mui-caret"></span>
+						  </button>
+						  <ul style='width:80%;margin-left:10%;margin-right: 10%; 'class="mui-dropdown__menu ">
+						    <li ng-repeat="date in months"><a ng-click="chooseMonth({{date}})"><time>{{ date |  amDateFormat: ' MMMM YYYY' }}</time></a></li>
+						  
+						  </ul>
+					 </div>
+					<div>
+				  	  <nvd3 options="pieChartOptions" data="pieChartData"></nvd3>
+				  	</div>  
+				  	
+				  	
+			</ion-slide>
+			<ion-slide>	  	
+				  	<div>
+				  	  <nvd3 options="lineChartOptions" data="lineChartData"class="with-3d-shadow with-transitions"></nvd3>
+				  	</div>
+			</ion-slide>	  	 
+		 </ion-slide-box> 	
+	</ion-content>
+</ion-view>
