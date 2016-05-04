@@ -1,5 +1,5 @@
 
-angular.module('expense_manager', ['ionic', 'controllers' ,'ngCordova', 'ionic-datepicker','nvd3','angularMoment'])
+angular.module('expense_manager', ['ionic', 'controllers' ,'ngCordova', 'ionic-datepicker','nvd3','angularMoment','firebase'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -109,6 +109,15 @@ angular.module('expense_manager', ['ionic', 'controllers' ,'ngCordova', 'ionic-d
         'menuContent': {
           templateUrl: 'templates/setExpense.html',
           controller: 'setExpenseCtrl'
+        }
+      }
+    })
+    .state('app.cloud', {
+      url: '/cloud',
+      views: {
+        'menuContent': {
+          templateUrl: 'templates/cloud.html',
+          controller: 'cloudCtrl'
         }
       }
     });

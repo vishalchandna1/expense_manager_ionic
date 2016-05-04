@@ -77,9 +77,8 @@ angular.module('controllers', [])
 
         function initDB() {
 
-            DB = new PouchDB('Data', {
-                adapter: 'websql'
-            });
+            DB = new PouchDB('Data');
+
             console.log(DB)
         }
 
@@ -167,9 +166,10 @@ angular.module('controllers', [])
     $scope.totalExpense = 0;
     $scope.overSpent = false;
     var budgetData = UserService.getBudget().data;
+    
 
     var showBudgetInfo = function(month, year) {
-      budgetData = UserService.getBudget().data;
+        budgetData = UserService.getBudget().data;
         for (var i = 0; i < budgetData.length; i++) {
             if (year == (new Date(budgetData[i].currentDate)).getFullYear() &&
                 month == (new Date(budgetData[i].currentDate)).getMonth()) {
@@ -205,9 +205,8 @@ angular.module('controllers', [])
         }
 
     }
-   
-    var getGraphData = function(month, year) {
 
+    var getGraphData = function(month, year,a) {
 
         console.log($scope.selectedMonth)
         $scope.graphData = [0, 0, 0, 0, 0, 0, 0, 0];
@@ -217,10 +216,10 @@ angular.module('controllers', [])
         $scope.showBudgetVariables = false;
 
         for (var i = 0; i < $scope.data.length; i++) {
-          
-                if ($scope.months[$scope.months.length - 1].getMonth() != $scope.data[i].date.getMonth()) {
-                    $scope.months.push($scope.data[i].date);
-                }
+            if(a)
+            if ($scope.months[$scope.months.length - 1].getMonth() != $scope.data[i].date.getMonth()) {
+                $scope.months.push($scope.data[i].date);
+            }
 
 
             if ($scope.data[i].date.getFullYear() == year) {
@@ -232,20 +231,25 @@ angular.module('controllers', [])
 
         }
         console.log($scope.graphData);
-        temp = false;
+        
 
     }
     $scope.chooseMonth = function(month) {
+
         console.log((new Date(month)).getMonth())
         $scope.selectedMonth = month;
 
-        getGraphData((new Date($scope.selectedMonth)).getMonth(), (new Date($scope.selectedMonth)).getFullYear());
+        getGraphData((new Date($scope.selectedMonth)).getMonth(), (new Date($scope.selectedMonth)).getFullYear(),false);
         showBudgetInfo((new Date($scope.selectedMonth)).getMonth(), (new Date($scope.selectedMonth)).getFullYear());
 
         showGraph();
     }
     $rootScope.$on('$ionicView.enter', function() {
+        if(!UserService.getBudget().data)
+            UserService.setBudget({data:[]});
         $timeout(function() {
+
+
             $scope.graphData = [0, 0, 0, 0, 0, 0, 0, 0];
             DBService.getData().then(function(snap) {
                 var d = snap;
@@ -261,11 +265,11 @@ angular.module('controllers', [])
                     $scope.selectedMonth = $scope.data[0].date;
                     $scope.months.push($scope.data[0].date);
                 }
-                getGraphData($scope.selectedMonth.getMonth(), $scope.selectedMonth.getFullYear());
+                getGraphData($scope.selectedMonth.getMonth(), $scope.selectedMonth.getFullYear(),true);
                 showBudgetInfo($scope.selectedMonth.getMonth(), $scope.selectedMonth.getFullYear());
                 showGraph();
             });
-        }, 10);
+        }, 100);
     });
 
 
@@ -456,7 +460,7 @@ angular.module('controllers', [])
             datePickerCallback(val);
         },
         dateFormat: 'dd-MM-yyyy',
-        closeOnSelect: true,
+        closeOnSelect: false,
     };
 
 
@@ -646,7 +650,7 @@ angular.module('controllers', [])
     }
     var pieChartData = function(month, year) {
         $scope.pieChartData1 = [0, 0, 0, 0, 0, 0, 0, 0];
-        for (var i = 0; i < $scope.data.length - 1; i++) {
+        for (var i = 0; i < $scope.data.length ; i++) {
 
             if ($scope.data[i].date.getFullYear() == year) {
                 if ($scope.data[i].date.getMonth() == month)
@@ -762,10 +766,10 @@ angular.module('controllers', [])
             stopLoading: stopLoading
         };
     })
-    .controller('setExpenseCtrl', function($scope,$rootScope, $timeout,$stateParams, UserService, $state) {
+    .controller('setExpenseCtrl', function($scope, $rootScope, $timeout, $stateParams, UserService, $state) {
         $scope.budget = {};
         $scope.budget.currentDate = new Date();
-        $scope.dataAvailable=false;
+        $scope.dataAvailable = false;
 
         $rootScope.$on('$ionicView.enter', function() {
             var budgetData = UserService.getBudget().data;
@@ -787,15 +791,153 @@ angular.module('controllers', [])
                     UserService.setBudget({
                         data: temp
                     });
-                    $timeout(function(){
-                    $state.go('app.overview')
+                    $timeout(function() {
+                        $state.go('app.overview')
 
-                    },300)
+                    }, 300)
                 }
             }
-            if($scope.budgetHistory.length==0)
-              $scope.dataAvalable = false;
+            if ($scope.budgetHistory.length == 0)
+                $scope.dataAvalable = false;
             else
-              $scope.dataAvailable = true;
+                $scope.dataAvailable = true;
         });
+    })
+    .controller('cloudCtrl', function($scope, DBService, $rootScope, DBService, $timeout, $stateParams, UserService, $state, $firebase) {
+       var firebaseObj = new Firebase("http://crackling-inferno-7905.firebaseio.com/UserData");
+        $scope.graphData = [0, 0, 0, 0, 0, 0, 0, 0];
+        DBService.getData().then(function(snap) {
+            var d = snap;
+            d.sort(function(date1, date2) {
+                if (date1.date > date2.date) return -1;
+                if (date1.date < date2.date) return 1;
+                return 0;
+            })
+            $scope.data = d;
+            console.log(d)
+
+        });
+        $scope.a = {};
+        $scope.a.userEmail = '';
+
+        $scope.retreiveFromCloud = function() {
+            var firebaseObj = new Firebase("http://crackling-inferno-7905.firebaseio.com/UserData");
+            setTimeout(function() {
+                 console.log($scope.a.userEmail)
+            if ($scope.a.userEmail.length >= 8) {
+
+                String.prototype.replaceAll = function(find, replace) {
+                    var str = this;
+                    return str.replace(new RegExp(find.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g'), replace);
+                };
+                var temp = $scope.a.userEmail
+                temp = temp.replaceAll('.', 'at')
+                console.log(temp)
+                firebaseObj.child(temp).child('Expense').once('value', function(snap) {
+                    $scope.expenseCloudData = snap.val();
+
+                })
+                firebaseObj.child(temp).child('Budget').once('value', function(snap1) {
+                    $timeout(function() {
+                        $scope.budgetCloudData = snap1.val();
+                        if ($scope.budgetCloudData || $scope.expenseCloudData) {
+                            for (i = 0; i < $scope.expenseCloudData.data.length; i++) {
+                                for (j = 0; j < $scope.data.length; j++) {
+
+                                    console.log($scope.expenseCloudData.data[0]._id + $scope.data[0]._id)
+                                    if ($scope.expenseCloudData.data[i]._id == $scope.data[j]._id) {
+                                        break;
+                                    } else if (j == $scope.data.length - 1) {
+                                        var a={};
+                                        a.catText=$scope.expenseCloudData.data[i].catText;
+                                        a.date=$scope.expenseCloudData.data[i].date;
+                                        a.title=$scope.expenseCloudData.data[i].title;
+                                        a.debitAmount=$scope.expenseCloudData.data[i].debitAmount;
+
+                                        console.log(a);
+                                        DBService.addData(a);
+                                    }
+                                }
+                            }
+                            if(!localBudget)
+                                UserService.setBudget({data:[]});
+                            var localBudget = UserService.getBudget().data;
+                            for (i = 0; i < $scope.budgetCloudData.data.length; i++) {
+                                if(localBudget.length==0){
+                                    
+                                    var tempData = [];
+                                        tempData.push($scope.budgetCloudData.data[i]);
+                                        UserService.setBudget({
+                                            data: tempData
+                                        });
+                                }
+
+                                for (j = 0; j < localBudget.length; j++) {
+
+
+
+                                    if ($scope.budgetCloudData.data[i].currentDate == localBudget[j].currentDate) {
+                                        
+                                        break;
+                                    } else if (j == localBudget.length-1) {
+                                        console.log(UserService.getBudget().data)
+                                        
+                                        var tempData = UserService.getBudget().data;
+                                        tempData.push($scope.budgetCloudData.data[i]);
+                                        UserService.setBudget({
+                                            data: tempData
+                                        });
+                                    }
+                                }
+                            }
+                        }
+                    }, 400)
+                })
+
+            }
+
+            }, 100);
+           
+        }
+
+        $scope.addDataToCloud = function() {
+            var firebaseObj = new Firebase("http://crackling-inferno-7905.firebaseio.com/UserData");
+            UserService.startLoading();
+        setTimeout(function() {
+            if ($scope.a.userEmail.length >= 8) {
+                console.log($scope.a.userEmail);
+
+
+                // $scope.a.userEmail = $scope.a.userEmail.replace('.','at')
+                String.prototype.replaceAll = function(find, replace) {
+                    var str = this;
+                    return str.replace(new RegExp(find.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g'), replace);
+                };
+                if ($scope.data || $scope.data.length > 0) {
+                    var temp = $scope.a.userEmail
+                    temp = temp.replaceAll('.', 'at')
+
+                  /*  firebaseObj.child(temp).child('Expense').set({
+                        data: $scope.data
+                    })*/
+                    for(i=0;i<$scope.data.length;i++)
+                       $scope.data[i].date = $scope.data[i].date.toString()
+                        firebaseObj.child(temp).child('Expense').set({
+                            data:$scope.data
+                    })
+                    firebaseObj.child(temp).child('Budget').set({
+                        data: UserService.getBudget().data
+                    })
+                    UserService.stopLoading();
+                }
+
+            }
+                 UserService.stopLoading();
+                 setTimeout(function() {
+
+                    $state.go('app.overview')
+                 }, 200);
+        }, 100);
+            
+        }
     });
